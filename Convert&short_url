@@ -1,0 +1,67 @@
+function convertAndShortenUrls() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("DOCUMENTOS");
+  
+  if (!sheet) {
+    Logger.log("No se encontró la hoja 'DOCUMENTOS'. Verifica el nombre de la hoja.");
+    return;
+  }
+  
+  var dataRange = sheet.getDataRange();
+  var data = dataRange.getValues();
+  var fileColumn = 5; // Columna E (5)
+  var driveLinkColumn = 7; // Columna G (7)
+  
+  for (var i = 1; i < data.length; i++) { // Comenzar desde 1 para ignorar la primera fila
+    var filePath = data[i][fileColumn - 1];
+    
+    if (filePath) {
+      // Obtener el nombre del archivo desde el enlace de AppSheet
+      var fileName = filePath.split('/').pop();
+      
+      // Buscar el archivo en Google Drive por su nombre
+      var files = DriveApp.getFilesByName(fileName);
+      
+      if (files.hasNext()) {
+        var file = files.next();
+        var fileId = file.getId();
+        var driveLink = "https://drive.google.com/file/d/" + fileId + "/view?usp=drive_link";
+        sheet.getRange(i + 1, driveLinkColumn).setValue(driveLink);
+        
+        // Acortar el enlace de Google Drive
+        var apiUrl = "https://api.tinyurl.com/create";
+        var headers = {
+          "Authorization": "(**Tu API en tinyurl**)", // Cambia lo que esta dentro de las ""
+          "Content-Type": "application/json"
+        };
+        var payload = {
+          "url": driveLink
+        };
+        var options = {
+          "method": "post",
+          "headers": headers,
+          "payload": JSON.stringify(payload),
+          "muteHttpExceptions": true
+        };
+        
+        try {
+          Logger.log("Enviando URL: " + driveLink);
+          var response = UrlFetchApp.fetch(apiUrl, options);
+          var json = JSON.parse(response.getContentText());
+          
+          if (json.data && json.data.tiny_url) {
+            var shortenedUrl = json.data.tiny_url;
+            sheet.getRange(i + 1, driveLinkColumn + 1).setValue(shortenedUrl); // Columna H (8)
+          } else {
+            Logger.log("Error acortando URL en fila " + (i + 1) + ": " + JSON.stringify(json));
+          }
+        } catch (e) {
+          Logger.log("Error en fila " + (i + 1) + ": " + e.message);
+        }
+      } else {
+        Logger.log("No se encontró el archivo en Google Drive en fila " + (i + 1) + ": " + filePath);
+      }
+    } else {
+      Logger.log("Enlace de archivo inválido en fila " + (i + 1) + ": " + filePath);
+    }
+  }
+}
