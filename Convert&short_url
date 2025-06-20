@@ -1,15 +1,13 @@
 function convertAndShortenUrls() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("DOCUMENTOS");
-  
   if (!sheet) {
     Logger.log("No se encontró la hoja 'DOCUMENTOS'. Verifica el nombre de la hoja.");
     return;
   }
-  
   var dataRange = sheet.getDataRange();
   var data = dataRange.getValues();
-  var fileColumn = 5; // Columna E (5)
-  var driveLinkColumn = 7; // Columna G (7)
+  var fileColumn = 2; // Columna B (2)
+  var driveLinkColumn = 3; // Columna C (3)
   
   for (var i = 1; i < data.length; i++) { // Comenzar desde 1 para ignorar la primera fila
     var filePath = data[i][fileColumn - 1];
@@ -50,7 +48,7 @@ function convertAndShortenUrls() {
           
           if (json.data && json.data.tiny_url) {
             var shortenedUrl = json.data.tiny_url;
-            sheet.getRange(i + 1, driveLinkColumn + 1).setValue(shortenedUrl); // Columna H (8)
+            sheet.getRange(i + 1, driveLinkColumn + 1).setValue(shortenedUrl); // Columna D (4)
           } else {
             Logger.log("Error acortando URL en fila " + (i + 1) + ": " + JSON.stringify(json));
           }
