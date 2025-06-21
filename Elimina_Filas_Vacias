@@ -1,0 +1,33 @@
+function eliminarFilasEnBlanco(hojaNombre) {
+  const spreadsheet = SpreadsheetApp.openById("EL ID DE TU HOJA");
+  const hoja = spreadsheet.getSheetByName(hojaNombre);
+
+  if (!hoja) {
+    Logger.log("No se encontró la hoja: " + hojaNombre);
+    return;
+  }
+
+  Logger.log("Limpiando hoja: " + hoja.getName());
+
+  const ultimaFila = hoja.getLastRow();
+  const ultimaColumna = hoja.getLastColumn();
+
+  if (ultimaFila < 2) return; // No hay nada debajo del encabezado
+
+  const rango = hoja.getRange(2, 1, ultimaFila - 1, ultimaColumna); // Desde A2 hasta última celda con datos
+  const datos = rango.getValues();
+
+  const filasAEliminar = [];
+
+  for (let i = 0; i < datos.length; i++) {
+    const fila = datos[i];
+    const vacía = fila.every(celda => !celda || celda.toString().trim() === "");
+    if (vacía) filasAEliminar.push(i + 2); // +2 porque el rango empieza en la fila 2
+  }
+
+  for (let j = filasAEliminar.length - 1; j >= 0; j--) {
+    hoja.deleteRow(filasAEliminar[j]);
+  }
+
+  Logger.log("Filas vacías eliminadas: " + filasAEliminar.length);
+}
