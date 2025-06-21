@@ -1,0 +1,36 @@
+function acortarDesdeHoja(nombreColumnaURL, nombreColumnaResultado, nombreHoja) {
+  // Define el ID de tu hoja de cálculo
+  var spreadsheetId = "EL ID DE TU HOJA"; //ejemplo "1q01H8585i5TQ6MkJXOIPPIjxNq7_IVVbD1A2Xu_ut-o"
+  
+  // Obtiene la hoja de cálculo por su ID
+  var libro = SpreadsheetApp.openById(spreadsheetId);
+  if (!libro) throw new Error("No se encontró el libro de cálculo con el ID proporcionado: " + spreadsheetId);
+
+  // Luego, obtiene la hoja específica por su nombre
+  var hoja = libro.getSheetByName(nombreHoja);
+  if (!hoja) throw new Error("No se encontró la hoja: " + nombreHoja + " dentro del libro de cálculo.");
+
+  var datos = hoja.getDataRange().getValues();
+  var colURL = datos[0].indexOf(nombreColumnaURL);
+  var colResultado = datos[0].indexOf(nombreColumnaResultado);
+  if (colURL === -1 || colResultado === -1) throw new Error("Columnas no encontradas. Asegúrate de que los nombres de las columnas sean correctos.");
+
+  for (var i = 1; i < datos.length; i++) {
+    var urlLarga = datos[i][colURL];
+    if (urlLarga && !datos[i][colResultado]) {
+      var urlCorta = acortarConTinyURL(urlLarga);
+      hoja.getRange(i + 1, colResultado + 1).setValue(urlCorta);
+    }
+  }
+}
+
+function acortarConTinyURL(url) {
+  try {
+    var response = UrlFetchApp.fetch("https://tinyurl.com/api-create.php?url=" + encodeURIComponent(url));
+    return response.getContentText();
+  } catch (e) {
+    // Manejo de errores para la llamada a TinyURL
+    Logger.log("Error al acortar la URL " + url + ": " + e.toString());
+    return "Error al acortar"; // Puedes devolver un mensaje de error o dejarlo vacío
+  }
+}
