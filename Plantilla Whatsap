@@ -3,11 +3,11 @@
 & "&text=" 
 & "🌞 Buen día, _*" 
 & [Columna con el nobre del destinarario], 
-& "_*" 
+& "*_" 
 & "%0A" 
-& "📎 Adjunto al presente sírvase encontrar el reporte de incidencias correspondiente al dia : *" 
+& "📎 Adjunto al presente sírvase encontrar el reporte de incidencias correspondiente al dia : ```" 
 & [Fecha]
-& "*"
+& "```"
 & "%0A" 
 & "🔗 Click aquí: *" 
 & [Short_URL] 
