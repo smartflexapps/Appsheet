@@ -1,12 +1,12 @@
 function convertAndShortenUrls() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("REPORTES");
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("FILES");
   if (!sheet) {
-    Logger.log("No se encontró la hoja 'REPORTES'. Verifica el nombre de la hoja.");
+    Logger.log("No se encontró la hoja 'FILES'. Verifica el nombre de la hoja.");
     return;
   }
   var dataRange = sheet.getDataRange();
   var data = dataRange.getValues();
-  var fileColumn = 2; // Columna B (2)
+  var fileColumn = 2; // Columna B (2) // La columna que tene el enlace a drive
   var driveLinkColumn = 3; // Columna C (3)
   
   for (var i = 1; i < data.length; i++) { // Comenzar desde 1 para ignorar la primera fila
