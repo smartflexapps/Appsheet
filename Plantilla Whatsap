@@ -2,7 +2,7 @@
 & [columna donde esta el numero telefonico] // debe incluir el codigo del pais ejem +584241234567890
 & "&text=" 
 & "🌞 Buen día, _*" 
-& [Columna con el nobre del destinarario], 
+& [Columna con el nombre del destinarario], 
 & "*_" 
 & "%0A" 
 & "📎 Adjunto al presente sírvase encontrar el reporte de incidencias correspondiente al dia : ```" 
