@@ -1,7 +1,7 @@
 function eliminarFilasEnBlanco(spreadsheetId, hojaNombre) {
   // Usar el ID de la URL
-  const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
-  const hoja = spreadsheet.getSheetByName(hojaNombre);
+  const spreadsheet = SpreadsheetApp.openById(spreadsheetId);//Este parametro debe ser ingresado desde appsheet entre comillas simples''
+  const hoja = spreadsheet.getSheetByName(hojaNombre);//Este parametro debe ser ingresado desde appsheet sin comillas
   
   if (!hoja) {
     return "Error: No se encontró la hoja: " + hojaNombre;
