@@ -1,5 +1,5 @@
 "https://api.whatsapp.com/send/?phone=" 
-& [columna donde esta el numero telefonico] // debe incluir el codigo del pais ejem +584241234567890
+& [columna donde esta el numero telefonico] // debe incluir el codigo del pais ejem +584241234567
 & "&text=" 
 & "🌞 Buen día, _*" 
 & [Columna con el nombre del destinarario], 
