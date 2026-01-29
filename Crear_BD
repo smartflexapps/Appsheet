@@ -1,7 +1,6 @@
 function inicializarSistemaComunal() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   
-  // Unificamos todas las tablas en un solo objeto maestro
   const tablas = {
     "Configuracion": ["ID_Consejo", "Nombre_Consejo", "RIF", "Mision", "Logo", "Telefono_Contacto", "Email", "Direccion"],
     "Vocerias": ["ID_Voceria", "Nombre_Voceria", "Descripcion", "Icono"],
@@ -17,22 +16,41 @@ function inicializarSistemaComunal() {
 
   for (let nombre in tablas) {
     let sheet = ss.getSheetByName(nombre) || ss.insertSheet(nombre);
-    sheet.clear(); // Esto limpia la hoja si ya existe para crearla de cero
-    sheet.getRange(1, 1, 1, tablas[nombre].length)
+    sheet.clear(); 
+    
+    // 1. Definir Colores
+    let colorFondo = "#1565C0"; // Azul
+    if (nombre === "Configuracion") colorFondo = "#C62828"; // Rojo
+    else if (nombre.includes("CLAP")) colorFondo = "#2E7D32"; // Verde
+    else if (nombre.includes("Documentacion") || nombre.includes("Solicitudes")) colorFondo = "#757575"; // Gris
+    else if (nombre === "Proyectos_Blog") colorFondo = "#6A1B9A"; // Morado
+
+    // 2. Insertar Encabezados
+    const numCols = tablas[nombre].length;
+    sheet.getRange(1, 1, 1, numCols)
          .setValues([tablas[nombre]])
-         .setBackground(nombre.includes("CLAP") ? "#2E7D32" : "#1565C0") // Verde para CLAP, Azul para el resto
+         .setBackground(colorFondo)
          .setFontColor("white")
          .setFontWeight("bold");
+    
+    sheet.setTabColor(colorFondo);
+
+    // 3. LIMPIEZA: Eliminar columnas y filas sobrantes
+    // Dejar solo las columnas necesarias
+    let maxCols = sheet.getMaxColumns();
+    if (maxCols > numCols) {
+      sheet.deleteColumns(numCols + 1, maxCols - numCols); //
+    }
+
+    // Dejar solo 5 filas (Encabezado + 4 vacías)
+    let maxRows = sheet.getMaxRows();
+    const filasDeseadas = 5;
+    if (maxRows > filasDeseadas) {
+      sheet.deleteRows(filasDeseadas + 1, maxRows - filasDeseadas); //
+    } else if (maxRows < filasDeseadas) {
+      sheet.insertRowsAfter(maxRows, filasDeseadas - maxRows);
+    }
   }
   
-  Browser.msgBox("¡Estructura Completa! Se han creado las tablas de Configuración, Censo, Blog, Trámites y CLAP.");
-}
-// Esta función crea el menú automáticamente al abrir el archivo
-function onOpen() {
-  const ui = SpreadsheetApp.getUi();
-  ui.createMenu('⚙️ GESTIÓN COMUNAL')
-    .addItem('🚀 Inicializar/Resetear Tablas', 'inicializarSistemaComunal')
-    .addSeparator()
-    .addItem('📊 Actualizar Estadísticas', 'actualizarEstadisticas') // Para el futuro
-    .addToUi();
+  Browser.msgBox("¡Estructura Minimalista Creada! Tablas ajustadas a su tamaño y 5 filas máximo.");
 }
