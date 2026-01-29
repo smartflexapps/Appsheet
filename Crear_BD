@@ -1,0 +1,38 @@
+function inicializarSistemaComunal() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Unificamos todas las tablas en un solo objeto maestro
+  const tablas = {
+    "Configuracion": ["ID_Consejo", "Nombre_Consejo", "RIF", "Mision", "Logo", "Telefono_Contacto", "Email", "Direccion"],
+    "Vocerias": ["ID_Voceria", "Nombre_Voceria", "Descripcion", "Icono"],
+    "Voceros": ["ID_Vocero", "Nombre_Apellido", "ID_Voceria", "Fecha_Nacimiento", "Tipo_Vocero", "Telefono", "Foto_Vocero", "Estatus"],
+    "Censo_Familias": ["ID_Familia", "Nombre_Jefe", "Cedula_Jefe", "Fecha_Nacimiento_Jefe", "Tipo_Vivienda", "Condicion_Vivienda", "Servicios_Fallas", "Requerimiento_Prioritario", "Ubicacion_GPS"],
+    "Integrantes_Nucleo": ["ID_Persona", "ID_Familia", "Nombre", "Parentesco", "Fecha_Nacimiento", "Ocupacion", "Nivel_Escolaridad", "Padece_Enfermedad", "Requiere_Medicamentos", "Carnet_Patria", "Codapidis"],
+    "Proyectos_Blog": ["ID_Proyecto", "Titulo_Proyecto", "ID_Voceria", "Estado", "Descripcion", "Fecha_Inicio", "Imagen_Avance", "Publicar_Web"],
+    "Documentacion_Plantillas": ["ID_Documento", "Nombre_Documento", "Categoria", "Enlace_Plantilla_GDoc", "Acceso_Publico"],
+    "Solicitudes_Tramites": ["ID_Solicitud", "ID_Persona", "Tipo_Documento", "Fecha_Hora", "Estatus", "Codigo_QR_Hash", "Aporte_Pago_Movil"],
+    "CLAP_Jornadas": ["ID_Jornada", "Nombre_Jornada", "Costo_Bolsa", "Fecha_Llegada", "Estatus_Jornada"],
+    "CLAP_Pagos": ["ID_Pago", "ID_Jornada", "ID_Familia", "Referencia_Pago", "Monto_Pagado", "Estatus_Entrega"]
+  };
+
+  for (let nombre in tablas) {
+    let sheet = ss.getSheetByName(nombre) || ss.insertSheet(nombre);
+    sheet.clear(); // Esto limpia la hoja si ya existe para crearla de cero
+    sheet.getRange(1, 1, 1, tablas[nombre].length)
+         .setValues([tablas[nombre]])
+         .setBackground(nombre.includes("CLAP") ? "#2E7D32" : "#1565C0") // Verde para CLAP, Azul para el resto
+         .setFontColor("white")
+         .setFontWeight("bold");
+  }
+  
+  Browser.msgBox("¡Estructura Completa! Se han creado las tablas de Configuración, Censo, Blog, Trámites y CLAP.");
+}
+// Esta función crea el menú automáticamente al abrir el archivo
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('⚙️ GESTIÓN COMUNAL')
+    .addItem('🚀 Inicializar/Resetear Tablas', 'inicializarSistemaComunal')
+    .addSeparator()
+    .addItem('📊 Actualizar Estadísticas', 'actualizarEstadisticas') // Para el futuro
+    .addToUi();
+}
