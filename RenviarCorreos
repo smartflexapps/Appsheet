@@ -1,0 +1,50 @@
+function reenviarCorreosAppSheet() {
+  // Horario: de 7:00 a 19:00 (7am a 7pm)
+  const ahora = new Date();
+  const hora = ahora.getHours();
+  
+  if (hora < 7 || hora >= 19) {
+    return; // No ejecutar fuera del horario laboral
+  }
+  
+  const busqueda = 'has:nouserlabels "All emails are therefore being sent to the app creator"';
+  const hilos = GmailApp.search(busqueda);
+  
+  for (let hilo of hilos) {
+    const mensajes = hilo.getMessages();
+    
+    for (let mensaje of mensajes) {
+      const etiquetas = mensaje.getLabels();
+      const yaProcesado = etiquetas.some(et => et.getName() === 'Reenviado');
+      
+      if (!yaProcesado) {
+        const cuerpo = mensaje.getPlainBody();
+        
+        const regex = /'([^']+@[^']+)'/g;
+        const destinatarios = [];
+        let match;
+        
+        while ((match = regex.exec(cuerpo)) !== null) {
+          destinatarios.push(match[1]);
+        }
+        
+        if (destinatarios.length > 0) {
+          const principal = destinatarios[0];
+          const cc = destinatarios.slice(1);
+          
+          const asunto = mensaje.getSubject();
+          const cuerpoOriginal = mensaje.getBody();
+          
+          GmailApp.sendEmail(principal, asunto, '', {
+            htmlBody: cuerpoOriginal,
+            cc: cc.join(',')
+          });
+          
+          mensaje.markRead();
+          const etiqueta = GmailApp.getUserLabelByName('Reenviado');
+          mensaje.addLabel(etiqueta);
+        }
+      }
+    }
+  }
+}
