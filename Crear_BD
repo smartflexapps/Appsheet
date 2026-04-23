@@ -42,9 +42,9 @@ function inicializarSistemaComunal() {
       sheet.deleteColumns(numCols + 1, maxCols - numCols); //
     }
 
-    // Dejar solo 5 filas (Encabezado + 4 vacías)
+    // Dejar solo 5 filas (Encabezado + 2 vacías)
     let maxRows = sheet.getMaxRows();
-    const filasDeseadas = 5;
+    const filasDeseadas = 3;
     if (maxRows > filasDeseadas) {
       sheet.deleteRows(filasDeseadas + 1, maxRows - filasDeseadas); //
     } else if (maxRows < filasDeseadas) {
